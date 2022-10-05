@@ -20,7 +20,7 @@ async function getShowsByTerm(term) {
   return processShowData(response);
 }
 
-/**Takes a nested data object from TVMAZE axios.get() promise, creates an array of objects containing: 
+/**Takes a nested data object from TVMAZE axios.get() promise, creates an array of objects containing:
  * id, Name, Summary, and Image of the shows */
 function processShowData(response) {
   // how to do as .map()
@@ -33,8 +33,8 @@ function processShowData(response) {
     //Is there a good destructure format here?
     let showId = showdata.show.id; //const id did not work, referenced into season?
     const name = showdata.show.name;
-    const summary = showdata.show.summary === null 
-      ? "" 
+    const summary = showdata.show.summary === null
+      ? ""
       : showdata.show.summary;
 
     const image = showdata.show.image === null
@@ -56,7 +56,7 @@ function populateShows(shows) {
 
   for (let show of shows) {
     const $show = $(
-      `<div data-show-id="${show.id}" class="Show col-md-12 col-lg-6 mb-4">
+      `<div data-show-id="${show.showId}" class="Show col-md-12 col-lg-6 mb-4">
          <div class="media">
            <img
               src="${show.image}"
@@ -107,13 +107,27 @@ async function getEpisodesOfShow(showId) {
   return processSeasonData(response);
 }
 
-
+/** Accepts array and returns and object with the id, name, season, and number of each episode*/
 function processSeasonData(response) {
   return response.data.map(function(data){
     return {id:data.id, name:data.name, season:data.season, number: data.number};
   });
 }
 
-/** Write a clear docstring for this function... */
+/** Given an array of episodes, populates episode list part of DOM */
 
-// function populateEpisodes(episodes) { }
+function populateEpisodes(episodes) {
+
+  for (let ep of episodes) {
+    let description = `<li>${ep.name} (${ep.season}, ${ep.number})</li>`
+
+    $("#episodesList").append(description);
+  }
+
+}
+
+
+
+function handleButtonClick(evt) {
+  ("click", )
+}
