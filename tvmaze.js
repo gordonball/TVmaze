@@ -23,15 +23,25 @@ async function getShowsByTerm(term) {
 /**Takes a nested data object from TVMAZE axios.get() promise, creates an array of objects containing: 
  * id, Name, Summary, and Image of the shows */
 function processShowData(response) {
+  // how to do as .map()
+  // return response.data.map(function(data){
+  //   return {id:data.show.id, summary:data.show.summary//etc...}
+  // }
   let shows = [];
   for (let showdata of response.data) {
     //debugger;
     //Is there a good destructure format here?
-    let showId = showdata.show.id;
-    let showName = showdata.show.name;
-    let showSummary = showdata.show.summary === null ? "" : showdata.show.summary;
-    let showImage = showdata.show.image === null ? "https://tinyurl.com/tv-missing." : showdata.show.image.medium;
-    shows.push({ id: showId, name: showName, summary: showSummary, image: showImage });
+    let showId = showdata.show.id; //const id did not work, referenced into season?
+    const name = showdata.show.name;
+    const summary = showdata.show.summary === null 
+      ? "" 
+      : showdata.show.summary;
+
+    const image = showdata.show.image === null
+      ? "https://tinyurl.com/tv-missing"
+      : showdata.show.image.medium;
+
+    shows.push({ showId, name, summary, image });
   }
   return shows;
 }
@@ -45,7 +55,6 @@ function populateShows(shows) {
   //console.log(shows);
 
   for (let show of shows) {
-    // const showImage = show.show.image.medium;
     const $show = $(
       `<div data-show-id="${show.id}" class="Show col-md-12 col-lg-6 mb-4">
          <div class="media">
@@ -93,7 +102,17 @@ $searchForm.on("submit", async function (evt) {
  *      { id, name, season, number }
  */
 
-// async function getEpisodesOfShow(id) { }
+async function getEpisodesOfShow(showId) {
+  let response = await axios.get(`${TVMAZE_URL}/shows/${showId}/episodes`);
+  return processSeasonData(response);
+}
+
+
+function processSeasonData(response) {
+  return response.data.map(function(data){
+    return {id:data.id, name:data.name, season:data.season, number: data.number};
+  });
+}
 
 /** Write a clear docstring for this function... */
 
