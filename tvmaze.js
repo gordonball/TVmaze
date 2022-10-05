@@ -16,17 +16,17 @@ const TVMAZE_URL = "http://api.tvmaze.com";
 
 
 async function getShowsByTerm(term) {
-  // ADD: Remove placeholder & make request to TVMaze search shows API.
   let response = await axios.get(`${TVMAZE_URL}/search/shows`, { params: { q: term } });
   return processShowData(response);
 }
 
-/**Takes a nested data object from TVMAZE axios.get(), creates an array of objects containing: 
+/**Takes a nested data object from TVMAZE axios.get() promise, creates an array of objects containing: 
  * id, Name, Summary, and Image of the shows */
 function processShowData(response) {
   let shows = [];
   for (let showdata of response.data) {
     //debugger;
+    //Is there a good destructure format here?
     let showId = showdata.show.id;
     let showName = showdata.show.name;
     let showSummary = showdata.show.summary === null ? "" : showdata.show.summary;
