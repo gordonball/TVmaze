@@ -13,20 +13,27 @@ const TVMAZE_URL = "http://api.tvmaze.com";
  *    (if no image URL given by API, put in a default image URL)
  */
 
-//TODO: move response inside function
-//TODO: return promise of array with better variable name
-let response
+
+
 async function getShowsByTerm(term) {
   // ADD: Remove placeholder & make request to TVMaze search shows API.
-  response = await axios.get(`${TVMAZE_URL}/search/shows`, { params: { q: term } });
-  return response.data;
+  let response = await axios.get(`${TVMAZE_URL}/search/shows`, { params: { q: term } });
+  return processShowData(response);
 }
 
+/**Takes a nested data object from TVMAZE axios.get(), creates an array of objects containing: 
+ * id, Name, Summary, and Image of the shows */
 function processShowData(response) {
   let shows = [];
   for (let showdata of response.data) {
-    if
+    //debugger;
+    let showId = showdata.show.id;
+    let showName = showdata.show.name;
+    let showSummary = showdata.show.summary === null ? "" : showdata.show.summary;
+    let showImage = showdata.show.image === null ? "https://tinyurl.com/tv-missing." : showdata.show.image.medium;
+    shows.push({ id: showId, name: showName, summary: showSummary, image: showImage });
   }
+  return shows;
 }
 
 
@@ -35,21 +42,20 @@ function processShowData(response) {
 function populateShows(shows) {
 
   $showsList.empty();
-  console.log(shows);
+  //console.log(shows);
 
   for (let show of shows) {
     // const showImage = show.show.image.medium;
-    let showImage = show.show.image === null ? "https://tinyurl.com/tv-missing." : show.show.image.medium;
     const $show = $(
-        `<div data-show-id="${show.show.id}" class="Show col-md-12 col-lg-6 mb-4">
+      `<div data-show-id="${show.id}" class="Show col-md-12 col-lg-6 mb-4">
          <div class="media">
            <img
-              src="${showImage}"
-              alt="${show.show.name}"
+              src="${show.image}"
+              alt="${show.name}"
               class="w-25 me-3">
            <div class="media-body">
-             <h5 class="text-primary">${show.show.name}</h5>
-             <div><small>${show.show.summary}</small></div>
+             <h5 class="text-primary">${show.name}</h5>
+             <div><small>${show.summary}</small></div>
              <button class="btn btn-outline-light btn-sm Show-getEpisodes">
                Episodes
              </button>
@@ -60,7 +66,8 @@ function populateShows(shows) {
 
 
 
-    $showsList.append($show);  }
+    $showsList.append($show);
+  }
 }
 
 
