@@ -109,25 +109,38 @@ async function getEpisodesOfShow(showId) {
 
 /** Accepts array and returns and object with the id, name, season, and number of each episode*/
 function processSeasonData(response) {
-  return response.data.map(function(data){
-    return {id:data.id, name:data.name, season:data.season, number: data.number};
+  return response.data.map(function (data) {
+    return { id: data.id, name: data.name, season: data.season, number: data.number };
   });
 }
 
 /** Given an array of episodes, populates episode list part of DOM */
 
 function populateEpisodes(episodes) {
-
+  $("#episodesList").empty();
   for (let ep of episodes) {
     let description = `<li>${ep.name} (${ep.season}, ${ep.number})</li>`
-
     $("#episodesList").append(description);
   }
 
 }
 
+//Event handler for Episodes button click
+$("#showsList").on("click", ".btn", handleButtonClick);
 
+/**Calls populateEpisodes with the return value of getEpisodesOfShow,
+ * and then displays the list of episodes
+ */
+async function handleButtonClick(evt) {
+  evt.preventDefault();
+  let $button = $(evt.currentTarget);
+  //debugger;
+  let showId = $($button).closest(".Show").attr("data-show-id");
+  populateEpisodes(await getEpisodesOfShow(showId));
 
-function handleButtonClick(evt) {
-  ("click", )
+  displayEpisodesOfShow();
+}
+/**Displays episodeArea */
+function displayEpisodesOfShow() {
+  $("#episodesArea").removeAttr("style");
 }
